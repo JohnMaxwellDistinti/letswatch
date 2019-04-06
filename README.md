@@ -15,3 +15,4 @@ https://www.whatismybrowser.com/detect/what-version-of-chrome-do-i-have
 Once you have ChromeDriver installed on your machine, ensure that the path to your ChromeDriver is present in chromedriver.path
 # Enjoy yourself!
 
+![alt text](https://media.tenor.com/images/0fe8b28a976b06757fb64a3527b9f2b6/tenor.gif)
