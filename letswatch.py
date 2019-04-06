@@ -135,7 +135,6 @@ def getChromeVersion(driver):
     return chromeVersion
 
 while selection == 'new':
-    #CHROMEDRIVER_PATH = 'C:/Users/aweso/OneDrive/Documents/ChromeDriver/chromedriver'
     CHROMEDRIVER_PATH = getRawText('chromedriver', '.path')
     if CHROMEDRIVER_PATH == '':
         print('No path specified, please enter the path to your chromedriver in the chromedriver.path file...')
@@ -161,15 +160,11 @@ while selection == 'new':
 
     clearScreen()
     displayList(queryResults)
-    #for i in queryResultList:
-    #    print(i)
     selection = input('Enter the corresponding number of your selection, type "new" to enter a new query, or just return to quit!\n')
     if selection.isdigit():
         print(selection)
         if (int(selection)-1) <= len(queryResults):
             clearScreen()
-            #TODO: IF URL DOES NOT MATCH NAME OF SHOW, IT WILL RESULT IN A 404 ERROR!
-            #req = Request('https://vidcloud.icu/videos/'+findLiveURL(queryResults[int(selection)-1].text), headers={'User-Agent': 'Chrome/7.3'}) 
             req = Request('https://vidcloud.icu'+queryResultList[int(selection)-1], headers={'User-Agent': 'Chrome/'+chromeVersion})
             webpage = urlopen(req).read()
             streamingLink = findLiveMirror(str(webpage))
