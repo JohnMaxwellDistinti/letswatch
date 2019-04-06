@@ -6,7 +6,6 @@ Python (https://www.python.org/)
 Selenium Chromedriver (http://chromedriver.chromium.org/downloads) or (https://github.com/SeleniumHQ/selenium)
 
 (If you do not know which chromedriver to grab, check out this neat site...)
-
 https://www.whatismybrowser.com/detect/what-version-of-chrome-do-i-have
 
 # Other things to note
