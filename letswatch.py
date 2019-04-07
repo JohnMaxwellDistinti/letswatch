@@ -134,6 +134,11 @@ def getChromeVersion(driver):
         chromeVersion = '7.5'
     return chromeVersion
 
+def closeTabs(numTabs, driver):
+    while numTabs > 0:
+        driver.close()
+        numTabs = numTabs - 1
+
 while selection == 'new':
     CHROMEDRIVER_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver/chromedriver'
     options = Options()
@@ -187,7 +192,9 @@ while selection == 'new':
             extensions = ['/Extensions/uBlock-Origin_v1.18.8.crx',
                           '/Extensions/Whitelist-Manager_v2.4.0.crx',
                           '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx',
-                          '/Extensions/Miner-Blocker-Block-Coin-Miners_v1.1.3.crx']
+                          '/Extensions/MINEBLOCK-Block-web-miners-&-crypto-scripts_v1.1.crx',
+                          '/Extensions/WebRTC-Network-Limiter_v0.2.1.3.crx',
+                          '/Extensions/CsFire_v2.0.7.crx']
             addExtensions(extensions, options)
             driver2 = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
             time.sleep(2)
@@ -197,7 +204,6 @@ while selection == 'new':
             selection = input('If you would like to watch something else, just type "new"...')
             if selection == 'new':
                 driver2.quit()
-                print('aha')
                 clearScreen()
             else:
                 quit()
