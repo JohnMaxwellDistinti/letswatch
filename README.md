@@ -5,7 +5,6 @@ References https://www.vidcloud.icu/ front-end to fetch movies and TV shows seam
 # Dependencies
 https://www.python.org/
 
-**Selenium**
 >pip3 install selenium
 
 # Enjoy yourself!
