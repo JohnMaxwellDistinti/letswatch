@@ -135,11 +135,7 @@ def getChromeVersion(driver):
     return chromeVersion
 
 while selection == 'new':
-    CHROMEDRIVER_PATH = getRawText('chromedriver', '.path')
-    if CHROMEDRIVER_PATH == '':
-        print('No path specified, please enter the path to your chromedriver in the chromedriver.path file...')
-        print('example: C:/Users/distinct/Misc/ChromeDriver/chromedriver')
-        quit()
+    CHROMEDRIVER_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver/chromedriver'
     options = Options()
     options.headless = True
     options.add_argument('log-level=3')
