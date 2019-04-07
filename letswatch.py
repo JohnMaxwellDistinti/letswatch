@@ -1,17 +1,17 @@
 import time
-import os, os.path
 import pathlib
 import smtplib
+import os, os.path
+import selenium.webdriver.support.ui as ui
+
 from string import Template
-from urllib.request import Request, urlopen
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium import webdriver
+from urllib.request import Request, urlopen
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-import selenium.webdriver.support.ui as ui
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
 selection = 'new'
@@ -186,7 +186,8 @@ while selection == 'new':
             options.headless = False
             extensions = ['/Extensions/uBlock-Origin_v1.18.8.crx',
                           '/Extensions/Whitelist-Manager_v2.4.0.crx',
-                          '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx']
+                          '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx',
+                          '/Extensions/Miner-Blocker-Block-Coin-Miners_v1.1.3.crx']
             addExtensions(extensions, options)
             driver2 = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
             time.sleep(2)
