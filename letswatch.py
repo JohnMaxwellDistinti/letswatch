@@ -64,15 +64,6 @@ def displayList(list):
         print(str(count) + ') ' + item.text)
         count += 1
 
-def waitForElement(webElementID, browser, delay):
-    element = WebDriverWait(browser, delay).until(
-        EC.presence_of_element_located((By.ID, webElementID))
-    )
-    #print('found element!')
-
-def addExtensions(path):
-    cpt = sum([len(files) for r, d, files in os.walk(path)])
-
 def getCurrentPath():
     dir_path = pathlib.PureWindowsPath(os.path.dirname(os.path.realpath(__file__)))
     return dir_path
@@ -157,6 +148,7 @@ while selection == 'new':
     options = Options()
     options.headless = True
     options.add_argument('log-level=3')
+    options.add_argument('--disable-infobars')
     clear = lambda: os.system('cls')
 
     driver = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
@@ -202,12 +194,7 @@ while selection == 'new':
                 streamingLink = findLiveMirror(str(webpage))
             driver.quit()
             options.headless = False
-            #extensions = ['/Extensions/uBlock-Origin_v1.18.8.crx',
-            #              '/Extensions/Whitelist-Manager_v2.4.0.crx',
-            #              '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx',
-            #              '/Extensions/MINEBLOCK-Block-web-miners-&-crypto-scripts_v1.1.crx',
-            #              '/Extensions/WebRTC-Network-Limiter_v0.2.1.3.crx',
-            #              '/Extensions/CsFire_v2.0.7.crx']
+            options.add_argument("--start-maximized")
             extensions = ['/Extensions/uBlock-Origin_v1.18.8.crx',
                           '/Extensions/Whitelist-Manager_v2.4.0.crx',
             #              '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx',
@@ -220,6 +207,7 @@ while selection == 'new':
             siteSafety = isSafeSite(getSiteSource('https:'+streamingLink), badLinks)
             if siteSafety is not False:
                 driver2 = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
+                #driver2.maximize_window()
                 driver2.get('https://'+streamingLink)
                 clearScreen()
                 selection = input('If you would like to watch something else, just type "new"...')
