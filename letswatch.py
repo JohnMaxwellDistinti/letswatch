@@ -139,6 +139,19 @@ def closeTabs(numTabs, driver):
         driver.close()
         numTabs = numTabs - 1
 
+def getSiteSource(URL):
+    req = Request(URL, headers={'User-Agent': 'Chrome/'+chromeVersion})
+    webpage = urlopen(req).read()
+    return webpage
+
+def isSafeSite(siteHT, unsafeKeywords):
+    siteHT = str(siteHT)
+    for word in unsafeKeywords:
+        #print(siteHT.find(word))
+        if siteHT.find(word) is not -1:
+            return False
+    return True
+
 while selection == 'new':
     CHROMEDRIVER_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver/chromedriver'
     options = Options()
@@ -163,7 +176,7 @@ while selection == 'new':
     displayList(queryResults)
     selection = input('Enter the corresponding number of your selection, type "new" to enter a new query, or just return to quit!\n')
     if selection.isdigit():
-        print(selection)
+        #print(selection)
         if (int(selection)-1) <= len(queryResults):
             clearScreen()
             req = Request('https://vidcloud.icu'+queryResultList[int(selection)-1], headers={'User-Agent': 'Chrome/'+chromeVersion})
@@ -189,21 +202,39 @@ while selection == 'new':
                 streamingLink = findLiveMirror(str(webpage))
             driver.quit()
             options.headless = False
+            #extensions = ['/Extensions/uBlock-Origin_v1.18.8.crx',
+            #              '/Extensions/Whitelist-Manager_v2.4.0.crx',
+            #              '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx',
+            #              '/Extensions/MINEBLOCK-Block-web-miners-&-crypto-scripts_v1.1.crx',
+            #              '/Extensions/WebRTC-Network-Limiter_v0.2.1.3.crx',
+            #              '/Extensions/CsFire_v2.0.7.crx']
             extensions = ['/Extensions/uBlock-Origin_v1.18.8.crx',
                           '/Extensions/Whitelist-Manager_v2.4.0.crx',
-                          '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx',
-                          '/Extensions/MINEBLOCK-Block-web-miners-&-crypto-scripts_v1.1.crx',
+            #              '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx',
+            #              '/Extensions/MINEBLOCK-Block-web-miners-&-crypto-scripts_v1.1.crx',
                           '/Extensions/WebRTC-Network-Limiter_v0.2.1.3.crx',
                           '/Extensions/CsFire_v2.0.7.crx']
+            badLinks = ['https://api.vidnode.net/stream.php?type=estream']
             addExtensions(extensions, options)
-            driver2 = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
-            time.sleep(2)
-            driver2.get('https://'+streamingLink)
-            clearScreen()
-            print(replaceBackslash(getCurrentPath()), 'currentPath')
-            selection = input('If you would like to watch something else, just type "new"...')
+            #time.sleep(2)
+            siteSafety = isSafeSite(getSiteSource('https:'+streamingLink), badLinks)
+            if siteSafety is not False:
+                driver2 = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
+                driver2.get('https://'+streamingLink)
+                clearScreen()
+                selection = input('If you would like to watch something else, just type "new"...')
+            else:
+                #TODO: REDIRECT TO A DIFFERENT MIRROR!!!
+                clearScreen()
+                selection = input('The link you have selected is not safe, please choose a new link by typing "new"...')
+
+            #driver2.get('https://gomostream.com/show/impractical-jokers/06-18?watching=W54lbvuhNSqXatW6WunzsTyOG')
+            #print('https:'+streamingLink)
+            #print(replaceBackslash(getCurrentPath()), 'currentPath')
+            #selection = input('If you would like to watch something else, just type "new"...')
             if selection == 'new':
-                driver2.quit()
+                if siteSafety is not False:
+                    driver2.quit()
                 clearScreen()
             else:
                 quit()
