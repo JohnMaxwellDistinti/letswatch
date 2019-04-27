@@ -15,6 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 
 selection = 'new'
+mirror = ''
 
 def parseProgram(item):
     newStr = ''
@@ -135,6 +136,11 @@ def getSiteSource(URL):
     webpage = urlopen(req).read()
     return webpage
 
+def findRealVideo(stuff):
+    pass
+
+#https://redirector.googlevideo.com
+
 def isSafeSite(siteHT, unsafeKeywords):
     siteHT = str(siteHT)
     for word in unsafeKeywords:
@@ -143,7 +149,21 @@ def isSafeSite(siteHT, unsafeKeywords):
             return False
     return True
 
-while selection == 'new':
+def isDriverActive(driver):
+    try:
+        url = driver.current_url
+        return True
+    except:
+        return False
+
+def getPlayerStatus(playerClass, statusList):
+    for status in statusList:
+        if status in playerClass:
+            return status
+
+while selection == 'new' or selection == 'return':
+    episodeQueue = []
+    episodeChoice = None
     CHROMEDRIVER_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver/chromedriver'
     options = Options()
     options.headless = True
@@ -188,13 +208,17 @@ while selection == 'new':
             if tvShow:
                 episodes = findEpisodes(str(webpage), 'list_episdoe', 'class="comment"')
                 displayEpisodes(episodes)
+                for result in episodes:
+                    episodeQueue.append(result)
                 episodeSelection = input('Please select an episode, or type "return" to go back...')
-                req = Request('https://vidcloud.icu'+episodes[len(episodes)-int(episodeSelection)], headers={'User-Agent': 'Chrome/'+chromeVersion})
+                episodeChoice = len(episodes)-int(episodeSelection)
+                req = Request('https://vidcloud.icu'+episodes[episodeChoice], headers={'User-Agent': 'Chrome/'+chromeVersion})
                 webpage = urlopen(req).read()
                 streamingLink = findLiveMirror(str(webpage))
             driver.quit()
             options.headless = False
             options.add_argument("--start-maximized")
+            status = ["jw-state-idle","jw-state-playing","jw-state-paused","jw-state-complete"]
             extensions = ['/Extensions/uBlock-Origin_v1.18.8.crx',
                           '/Extensions/Whitelist-Manager_v2.4.0.crx',
             #              '/Extensions/Popup-Blocker-(strict)_v0.5.0.6.crx',
@@ -210,12 +234,53 @@ while selection == 'new':
                 #driver2.maximize_window()
                 driver2.get('https://'+streamingLink)
                 clearScreen()
+                #video = driver2.find_element_by_id('myVideo').click()
+                #time.sleep(0.5)
+                #driver2.fullscreen_window()
+                #fullscreen = driver2.find_element_by_xpath('//div[@class="jw-icon jw-icon-inline jw-button-color jw-reset jw-icon-fullscreen"]').sendKeys(Keys.F11)
+                debounce = False
+
+                #AUTOPLAY FEATURE! More progress to come...
+                if tvShow:
+                    while isDriverActive(driver2):
+                        videoDriver = driver2.find_element_by_id('myVideo')
+                        if getPlayerStatus(str(videoDriver.get_attribute('class')),status) == 'jw-state-idle':
+                            debounce = False
+                            videoDriver.click()
+                            driver2.fullscreen_window()
+                        elif getPlayerStatus(str(videoDriver.get_attribute('class')),status) == 'jw-state-playing':
+                            debounce = False
+                        elif getPlayerStatus(str(videoDriver.get_attribute('class')),status) == 'jw-state-complete':
+                            if debounce == False:
+                                episodeChoice = episodeChoice - 1
+                                req = Request('https://vidcloud.icu'+episodes[episodeChoice], headers={'User-Agent': 'Chrome/'+chromeVersion})
+                                webpage = urlopen(req).read()
+                                streamingLink = findLiveMirror(str(webpage))
+                                siteSafety = isSafeSite(getSiteSource('https:'+streamingLink), badLinks)
+                                if siteSafety is not False:
+                                    driver2.get('https://'+streamingLink)
+                                    #clearScreen()
+                                    debounce = True
+                                else:
+                                    episodeChoice = episodeChoice + 1
+                                    streamingLink = None
+                                    while siteSafety is False:
+                                        episodeChoice = episodeChoice - 1
+                                        print('inside while loop episode choice is ' + str(episodeChoice))
+                                        req = Request('https://vidcloud.icu'+episodes[episodeChoice], headers={'User-Agent': 'Chrome/'+chromeVersion})
+                                        webpage = urlopen(req).read()
+                                        streamingLink = findLiveMirror(str(webpage))
+                                        siteSafety = isSafeSite(getSiteSource('https:'+streamingLink), badLinks)
+                                    driver2.get('https://'+streamingLink)
+                                    #clearScreen()
+                                    episodeChoice = episodeChoice - 1
+                                    debounce = True
+                        time.sleep(1)
                 selection = input('If you would like to watch something else, just type "new"...')
             else:
                 #TODO: REDIRECT TO A DIFFERENT MIRROR!!!
                 clearScreen()
                 selection = input('The link you have selected is not safe, please choose a new link by typing "new"...')
-
             #driver2.get('https://gomostream.com/show/impractical-jokers/06-18?watching=W54lbvuhNSqXatW6WunzsTyOG')
             #print('https:'+streamingLink)
             #print(replaceBackslash(getCurrentPath()), 'currentPath')
