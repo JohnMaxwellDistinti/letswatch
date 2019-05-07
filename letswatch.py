@@ -164,14 +164,36 @@ def getPlayerStatus(playerClass, statusList):
 while selection == 'new' or selection == 'return':
     episodeQueue = []
     episodeChoice = None
-    CHROMEDRIVER_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver/chromedriver'
+    chromeVersion = None
+    CHROMEDRIVER73_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver73.0.3683.68/chromedriver'
+    CHROMEDRIVER74_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver74.0.3729.6/chromedriver'
+    CHROMEDRIVER75_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver75.0.3770.8/chromedriver'
     options = Options()
     options.headless = True
     options.add_argument('log-level=3')
     options.add_argument('--disable-infobars')
     clear = lambda: os.system('cls')
+    
+    try:
+        clearScreen()
+        driver = webdriver.Chrome(CHROMEDRIVER73_PATH, options=options)
+    except:
+        print('Version 73 failed, moving to 74.')
+    if driver is None:
+        try:
+            clearScreen()
+            driver = webdriver.Chrome(CHROMEDRIVER74_PATH, options=options)
+        except:
+            print('Version 74 failed, moving to 75.')
+    if driver is None:
+        try:
+            clearScreen()
+            driver = webdriver.Chrome(CHROMEDRIVER75_PATH, options=options)
+        except:
+            clearScreen()
+            print('All valid chromedriver versions failed! Update your Chrome!')
+            quit()
 
-    driver = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
     tvShow = False
 
     clearScreen()
@@ -293,3 +315,4 @@ while selection == 'new' or selection == 'return':
                 quit()
     elif selection == 'quit':
         quit()
+    
