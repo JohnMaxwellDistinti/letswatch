@@ -198,7 +198,6 @@ while selection == 'new' or selection == 'return':
 
     clearScreen()
     chromeVersion = getChromeVersion(driver)
-    print(chromeVersion)
     program = input('What would you like to watch?\n')
     parsedQuery = parseProgram(program)
     driver.get('https://vidcloud.icu/search.html?keyword='+parsedQuery)
