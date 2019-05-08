@@ -252,7 +252,12 @@ while selection == 'new' or selection == 'return':
             #time.sleep(2)
             siteSafety = isSafeSite(getSiteSource('https:'+streamingLink), badLinks)
             if siteSafety is not False:
-                driver2 = webdriver.Chrome(CHROMEDRIVER_PATH, options=options)
+                if chromeVersion == '73':
+                    driver2 = webdriver.Chrome(CHROMEDRIVER73_PATH, options=options)
+                elif chromeVersion == '74':
+                    driver2 = webdriver.Chrome(CHROMEDRIVER74_PATH, options=options)
+                elif chromeVersion == '75':
+                    driver2 = webdriver.Chrome(CHROMEDRIVER75_PATH, options=options)
                 #driver2.maximize_window()
                 driver2.get('https://'+streamingLink)
                 clearScreen()
