@@ -198,6 +198,7 @@ while selection == 'new' or selection == 'return':
 
     clearScreen()
     chromeVersion = getChromeVersion(driver)
+    print(chromeVersion)
     program = input('What would you like to watch?\n')
     parsedQuery = parseProgram(program)
     driver.get('https://vidcloud.icu/search.html?keyword='+parsedQuery)
@@ -252,11 +253,11 @@ while selection == 'new' or selection == 'return':
             #time.sleep(2)
             siteSafety = isSafeSite(getSiteSource('https:'+streamingLink), badLinks)
             if siteSafety is not False:
-                if chromeVersion == '73':
+                if chromeVersion == '7.3':
                     driver2 = webdriver.Chrome(CHROMEDRIVER73_PATH, options=options)
-                elif chromeVersion == '74':
+                elif chromeVersion == '7.4':
                     driver2 = webdriver.Chrome(CHROMEDRIVER74_PATH, options=options)
-                elif chromeVersion == '75':
+                elif chromeVersion == '7.5':
                     driver2 = webdriver.Chrome(CHROMEDRIVER75_PATH, options=options)
                 #driver2.maximize_window()
                 driver2.get('https://'+streamingLink)
