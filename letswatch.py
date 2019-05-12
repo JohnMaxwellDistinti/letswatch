@@ -56,7 +56,7 @@ def findLiveMirror(htmlSource):
     except:
         return 404
 def clearScreen():
-    clear()
+    os.system('cls')
 
 
 def displayList(list):
@@ -161,6 +161,34 @@ def getPlayerStatus(playerClass, statusList):
         if status in playerClass:
             return status
 
+def findValidChromeVersion():
+    driver = 0
+    try:
+        clearScreen()
+        driver = webdriver.Chrome(CHROMEDRIVER73_PATH, options=options)
+    except:
+        print('Version 73 failed, moving to 74.')
+    if driver == 0:
+        try:
+            clearScreen()
+            driver = webdriver.Chrome(CHROMEDRIVER74_PATH, options=options)
+            return driver
+        except:
+            print('Version 74 failed, moving to 75.')
+    else:
+        return driver
+    if driver == 0:
+        try:
+            clearScreen()
+            driver = webdriver.Chrome(CHROMEDRIVER75_PATH, options=options)
+            return driver
+        except:
+            clearScreen()
+            print('All valid chromedriver versions failed! Update your Chrome!')
+            quit()
+    else:
+        return driver
+
 while selection == 'new' or selection == 'return':
     episodeQueue = []
     episodeChoice = None
@@ -172,27 +200,10 @@ while selection == 'new' or selection == 'return':
     options.headless = True
     options.add_argument('log-level=3')
     options.add_argument('--disable-infobars')
+    print(findValidChromeVersion())
     clear = lambda: os.system('cls')
-    
-    try:
-        clearScreen()
-        driver = webdriver.Chrome(CHROMEDRIVER73_PATH, options=options)
-    except:
-        print('Version 73 failed, moving to 74.')
-    if driver is None:
-        try:
-            clearScreen()
-            driver = webdriver.Chrome(CHROMEDRIVER74_PATH, options=options)
-        except:
-            print('Version 74 failed, moving to 75.')
-    if driver is None:
-        try:
-            clearScreen()
-            driver = webdriver.Chrome(CHROMEDRIVER75_PATH, options=options)
-        except:
-            clearScreen()
-            print('All valid chromedriver versions failed! Update your Chrome!')
-            quit()
+
+    driver = findValidChromeVersion()
 
     tvShow = False
 
