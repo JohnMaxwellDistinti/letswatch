@@ -2,6 +2,7 @@ import time
 import pathlib
 import smtplib
 import os, os.path
+import ctypes
 import selenium.webdriver.support.ui as ui
 
 from string import Template
@@ -113,7 +114,7 @@ def getRawText(file, extension):
     return text
 
 def getChromeVersion(driver):
-    chromeVersion = driver.capabilities['version'][0:2]
+    chromeVersion = driver.capabilities['browserVersion'][0:2]
     if chromeVersion == '71':
         chromeVersion = '7.1'
     elif chromeVersion == '72':
@@ -124,6 +125,8 @@ def getChromeVersion(driver):
         chromeVersion = '7.4'
     elif chromeVersion == '75':
         chromeVersion = '7.5'
+    elif chromeVersion == '76':
+        chromeVersion = '7.6'
     return chromeVersion
 
 def closeTabs(numTabs, driver):
@@ -183,6 +186,14 @@ def findValidChromeVersion():
             driver = webdriver.Chrome(CHROMEDRIVER75_PATH, options=options)
             return driver
         except:
+            print('Version 75 failed, moving to 76.')
+            clearScreen()
+    if driver == 0:
+        try:
+            clearScreen()
+            driver = webdriver.Chrome(CHROMEDRIVER76_PATH, options=options)
+            return driver
+        except:
             clearScreen()
             print('All valid chromedriver versions failed! Update your Chrome!')
             quit()
@@ -196,11 +207,12 @@ while selection == 'new' or selection == 'return':
     CHROMEDRIVER73_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver73.0.3683.68/chromedriver'
     CHROMEDRIVER74_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver74.0.3729.6/chromedriver'
     CHROMEDRIVER75_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver75.0.3770.8/chromedriver'
+    CHROMEDRIVER76_PATH = str(replaceBackslash(getCurrentPath()))+'/Driver76.0.3809.68/chromedriver'
     options = Options()
     options.headless = True
     options.add_argument('log-level=3')
     options.add_argument('--disable-infobars')
-    print(findValidChromeVersion())
+    findValidChromeVersion()
     clear = lambda: os.system('cls')
 
     driver = findValidChromeVersion()
@@ -269,6 +281,8 @@ while selection == 'new' or selection == 'return':
                     driver2 = webdriver.Chrome(CHROMEDRIVER74_PATH, options=options)
                 elif chromeVersion == '7.5':
                     driver2 = webdriver.Chrome(CHROMEDRIVER75_PATH, options=options)
+                elif chromeVersion == '7.6':
+                    driver2 = webdriver.Chrome(CHROMEDRIVER76_PATH, options=options)
                 #driver2.maximize_window()
                 driver2.get('https://'+streamingLink)
                 clearScreen()
@@ -297,6 +311,7 @@ while selection == 'new' or selection == 'return':
                                 siteSafety = isSafeSite(getSiteSource('https:'+streamingLink), badLinks)
                                 if siteSafety is not False:
                                     driver2.get('https://'+streamingLink)
+                                    print(driver2.get_window_size())
                                     #clearScreen()
                                     debounce = True
                                 else:
@@ -317,7 +332,7 @@ while selection == 'new' or selection == 'return':
                 selection = input('If you would like to watch something else, just type "new"...')
             else:
                 #TODO: REDIRECT TO A DIFFERENT MIRROR!!!
-                clearScreen()
+                #clearScreen()
                 selection = input('The link you have selected is not safe, please choose a new link by typing "new"...')
             #driver2.get('https://gomostream.com/show/impractical-jokers/06-18?watching=W54lbvuhNSqXatW6WunzsTyOG')
             #print('https:'+streamingLink)
@@ -326,7 +341,7 @@ while selection == 'new' or selection == 'return':
             if selection == 'new':
                 if siteSafety is not False:
                     driver2.quit()
-                clearScreen()
+                #clearScreen()
             else:
                 quit()
     elif selection == 'quit':
